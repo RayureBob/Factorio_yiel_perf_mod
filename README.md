@@ -1,4 +1,5 @@
 # Factorio_yield_perf_mod
+### still WIP
 A mod adding a tool to compute yield of a crafting machine setup
 ![screenshot](https://image.noelshack.com/fichiers/2023/13/1/1679933706-2023-03-27-18-14-48-factorio-1-1-73.png)
 
