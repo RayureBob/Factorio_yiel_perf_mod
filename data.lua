@@ -10,4 +10,3 @@ data:extend({
         icon = Shortcut_Icon
     }
 })
-
