@@ -17,7 +17,7 @@ Buttons = {
 
 Frame_Settings = {
     frame_name = "performance_gui",
-    size = { 800, 600 },
+    size = { 800,  800 },
     module_slot_size = 50
 }
 
@@ -41,6 +41,23 @@ Frame_Panels_Names = {
 
     recipe_configuration = {
         recipe_selector_name = "recipe selector"
+    },
+
+    machine_performance = {
+        mono_perf = {
+            yield_per_sec = "yield_per_sec_label",
+            actual_craft_time = "actual_craft_time_label"
+        },
+
+        machine_to_yield = {
+            input_field = "machine_to_yield_input_field",
+            yield_result = "machine_to_yield_result"
+        },
+
+        yield_to_machine = {
+            input_field = "yield_to_machine_input_field",
+            yield_result = "yield_to_machine_result"
+        }
     }
 }
 

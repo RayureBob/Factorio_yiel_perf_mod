@@ -7,7 +7,8 @@ Module_slots = { }
 local selection = {
     building = nil,
     recipe = nil,
-    available_modules = Modules_Profiles.intermediate_products
+    available_modules = Modules_Profiles.intermediate_products,
+    selected_modules = { }
 }
 
 local recipe_selector
@@ -96,8 +97,6 @@ local function create_building_configuration(target_frame)
 end
    
 
-
-
 local function update_module_slots()
     local current_slot
     for i=1, #Module_slots do
@@ -115,6 +114,114 @@ local function update_module_slots()
             current_slot.elem_value = nil
         end
     end
+end
+
+
+local function create_machine_performance(frame)
+
+    local main_container = Add_flow_panel(frame)
+    local fillers = { }
+    
+    -- a
+    main_container.add { type = "label", caption = "Computed Performances", style = "heading_1_label" }
+    main_container.add { type = "line" }
+
+    -- b
+    local mono_yield_container = Add_flow_panel(main_container, "horizontal")
+    mono_yield_container.style.horizontally_stretchable = true
+    fillers[#fillers+1] = Add_filler(mono_yield_container)
+    
+    local yield_per_sec = Add_flow_panel(mono_yield_container)
+    yield_per_sec.style.vertically_stretchable = true
+    
+    -- yield_per_sec.add { type = "label", caption = "Yield Per Second", style = "heading_1_label" }
+    -- yield_per_sec.add { type = "label", name = Frame_Panels_Names.machine_performance.mono_perf.yield_per_sec, caption = "temp" }
+    Center_element_horizontally_in_parent(yield_per_sec, { type = "label", caption = "Yield Per Second", style = "heading_1_label" } )
+    Center_element_horizontally_in_parent(yield_per_sec, { type = "label", name = Frame_Panels_Names.machine_performance.mono_perf.yield_per_sec, caption = "temp" } )
+
+    fillers[#fillers+1] = Add_filler(mono_yield_container)
+    
+    local actual_craft_time = Add_flow_panel(mono_yield_container)
+    actual_craft_time.style.vertically_stretchable = true
+
+    -- actual_craft_time.add { type = "label", caption = "Actual Craft Time", style = "heading_1_label" }
+    -- actual_craft_time.add { type = "label", name = Frame_Panels_Names.machine_performance.mono_perf.actual_craft_time, caption = "temp" }
+    Center_element_horizontally_in_parent(actual_craft_time, { type = "label", caption = "Actual Craft Time", style = "heading_1_label" } )
+    Center_element_horizontally_in_parent(actual_craft_time, { type = "label", name = Frame_Panels_Names.machine_performance.mono_perf.actual_craft_time, caption = "temp" })
+
+    fillers[#fillers+1] = Add_filler(mono_yield_container)
+    
+    for i=1, #fillers, 1 do
+        fillers[i].style.horizontally_stretchable = true
+    end
+
+    fillers = { }
+    
+    -- c
+    local machine_to_yield_container = Add_flow_panel( main_container )
+    Center_element_horizontally_in_parent(machine_to_yield_container,  { type = "label", caption = "product/sec with X machines", style = "heading_1_label" })
+
+    local field_container = Add_flow_panel( machine_to_yield_container, "horizontal" )
+    Add_space_in(field_container, true, false)
+    local left = Add_flow_panel( field_container )
+    local title = Center_element_horizontally_in_parent(left, { type = "label", caption = "Machine Count", style ="heading_2_label" })
+    Center_element_horizontally_in_parent(left, { 
+        type = "textfield",
+        name = Frame_Panels_Names.machine_performance.machine_to_yield.input_field,
+        clear_and_focus_on_right_click = true,
+        numeric = true
+    })
+    
+     Add_space_in(field_container, true, false)
+    
+    
+    local produce = Add_flow_panel(field_container)
+    Add_space_in(produce, true, true)
+    produce.add { type = "label", caption = "------------------>", style = "heading_2_label" }
+    Add_space_in(produce, true, true)
+
+     Add_space_in(field_container, true, false)
+    local right = Add_flow_panel( field_container )
+    Center_element_horizontally_in_parent(right, { type = "label", caption = "Yield", style ="heading_2_label" })
+    Center_element_horizontally_in_parent(right, { type = "label", name = Frame_Panels_Names.machine_performance.machine_to_yield.yield_result, caption = "machine count"})
+    Add_space_in(field_container, true, false)
+
+    Add_space_in(main_container, false, true)
+
+    -- d
+    local machine_to_yield_container = Add_flow_panel( main_container )
+    Center_element_horizontally_in_parent(machine_to_yield_container,  {type = "label", caption = "product/sec with X machines", style = "heading_1_label" })
+
+    local field_container = Add_flow_panel( machine_to_yield_container, "horizontal" )
+    Add_space_in(field_container, true, false)
+    local left = Add_flow_panel( field_container )
+    local title = Center_element_horizontally_in_parent(left, { type = "label", caption = "Target Yield", style ="heading_2_label" })
+    Center_element_horizontally_in_parent(left, { 
+        type = "textfield",
+        name = Frame_Panels_Names.machine_performance.machine_to_yield.input_field,
+        clear_and_focus_on_right_click = true,
+        numeric = true
+    })
+    
+    -- Add_space_in(field_container, true, false)
+    
+    
+    local produce = Add_flow_panel(field_container)
+    Add_space_in(produce, true, true)
+    produce.add { type = "label", caption = "------------------>", style = "heading_2_label" }
+    Add_space_in(produce, true, true)
+
+    -- Add_space_in(field_container, true, false)
+    local right = Add_flow_panel( field_container )
+    Center_element_horizontally_in_parent(right, { type = "label", caption = "Necessary machines", style ="heading_2_label" })
+    Center_element_horizontally_in_parent(right, { type = "label", name = Frame_Panels_Names.machine_performance.yield_to_machine.yield_result, caption = "machine count"})
+    Add_space_in(field_container, true, false)
+
+end
+
+
+function Update_Performances()
+    
 end
 
 function Update_Recipe_Selection(selected_recipe)
@@ -200,20 +307,6 @@ function Update_Building_Selection(selected_building)
 
     update_module_slots()
     Update_Performances()
-end
-
-local function create_machine_performance(frame)
-
-    local main_container = Add_flow_panel(frame)
-    
-    main_container.add { type = "label", caption = "Computed Performances", style = "heading_2_label" }
-    main_container.add { type = "line" }
-
-    
-end
-
-function Update_Performances()
-    
 end
 
 function Build_interface(player)
