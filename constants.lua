@@ -24,6 +24,7 @@ Frame_Settings = {
 
 
 Modules_Profiles = {
+    Speeds =  { "speed-module", "speed-module-2", "speed-module-3" },
     Basics =  { "speed-module", "speed-module-2", "speed-module-3", "effectivity-module" , "effectivity-module-2", "effectivity-module-3"},
     intermediate_products = { "speed-module", "speed-module-2", "speed-module-3", "effectivity-module" , "effectivity-module-2", "effectivity-module-3", "productivity-module", "productivity-module-2", "productivity-module-3" }
 }

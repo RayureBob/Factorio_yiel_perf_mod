@@ -1,14 +1,31 @@
-require("GUI_utils")
+require("Utils")
 
 local custom_frame
 local module_slots_panel
 Module_slots = { }
 
-local selection = {
+selection = {
     building = nil,
     recipe = nil,
-    available_modules = Modules_Profiles.intermediate_products,
+    available_modules = Modules_Profiles.Speeds,
     selected_modules = { }
+}
+
+local dynamic_fields = { 
+    mono = {
+        yield_per_second = nil,
+        effective_craft_time = nil
+    },
+
+    machine_to_yield = {
+        input_field = nil,
+        result = nil
+    },
+
+    yield_to_machine = {
+        input_field = nil,
+        result = nil
+    }
 }
 
 local recipe_selector
@@ -134,20 +151,18 @@ local function create_machine_performance(frame)
     local yield_per_sec = Add_flow_panel(mono_yield_container)
     yield_per_sec.style.vertically_stretchable = true
     
-    -- yield_per_sec.add { type = "label", caption = "Yield Per Second", style = "heading_1_label" }
-    -- yield_per_sec.add { type = "label", name = Frame_Panels_Names.machine_performance.mono_perf.yield_per_sec, caption = "temp" }
     Center_element_horizontally_in_parent(yield_per_sec, { type = "label", caption = "Yield Per Second", style = "heading_1_label" } )
-    Center_element_horizontally_in_parent(yield_per_sec, { type = "label", name = Frame_Panels_Names.machine_performance.mono_perf.yield_per_sec, caption = "temp" } )
+    local mono_yield_panel = Center_element_horizontally_in_parent(yield_per_sec, { type = "label", name = Frame_Panels_Names.machine_performance.mono_perf.yield_per_sec, caption = "settings incorrect for computation" } )
+    dynamic_fields.mono.yield_per_second = mono_yield_panel
 
     fillers[#fillers+1] = Add_filler(mono_yield_container)
     
     local actual_craft_time = Add_flow_panel(mono_yield_container)
     actual_craft_time.style.vertically_stretchable = true
-
-    -- actual_craft_time.add { type = "label", caption = "Actual Craft Time", style = "heading_1_label" }
-    -- actual_craft_time.add { type = "label", name = Frame_Panels_Names.machine_performance.mono_perf.actual_craft_time, caption = "temp" }
-    Center_element_horizontally_in_parent(actual_craft_time, { type = "label", caption = "Actual Craft Time", style = "heading_1_label" } )
-    Center_element_horizontally_in_parent(actual_craft_time, { type = "label", name = Frame_Panels_Names.machine_performance.mono_perf.actual_craft_time, caption = "temp" })
+    
+    Center_element_horizontally_in_parent(actual_craft_time, { type = "label", caption = "Effective Craft Time", style = "heading_1_label" } )
+    local effective_craft_time_panel = Center_element_horizontally_in_parent(actual_craft_time, { type = "label", name = Frame_Panels_Names.machine_performance.mono_perf.actual_craft_time, caption = "settings incorrect for computation" })
+    dynamic_fields.mono.effective_craft_time = effective_craft_time_panel
 
     fillers[#fillers+1] = Add_filler(mono_yield_container)
     
@@ -162,66 +177,106 @@ local function create_machine_performance(frame)
     Center_element_horizontally_in_parent(machine_to_yield_container,  { type = "label", caption = "product/sec with X machines", style = "heading_1_label" })
 
     local field_container = Add_flow_panel( machine_to_yield_container, "horizontal" )
-    Add_space_in(field_container, true, false)
     local left = Add_flow_panel( field_container )
     local title = Center_element_horizontally_in_parent(left, { type = "label", caption = "Machine Count", style ="heading_2_label" })
-    Center_element_horizontally_in_parent(left, { 
+    dynamic_fields.machine_to_yield.input_field = Center_element_horizontally_in_parent(left, { 
         type = "textfield",
         name = Frame_Panels_Names.machine_performance.machine_to_yield.input_field,
         clear_and_focus_on_right_click = true,
         numeric = true
     })
     
-     Add_space_in(field_container, true, false)
-    
+    Add_space_in(field_container, true, false)
     
     local produce = Add_flow_panel(field_container)
     Add_space_in(produce, true, true)
     produce.add { type = "label", caption = "------------------>", style = "heading_2_label" }
     Add_space_in(produce, true, true)
 
-     Add_space_in(field_container, true, false)
+    Add_space_in(field_container, true, false)
+
     local right = Add_flow_panel( field_container )
     Center_element_horizontally_in_parent(right, { type = "label", caption = "Yield", style ="heading_2_label" })
-    Center_element_horizontally_in_parent(right, { type = "label", name = Frame_Panels_Names.machine_performance.machine_to_yield.yield_result, caption = "machine count"})
-    Add_space_in(field_container, true, false)
+    local machine_to_yield_res_panel = Center_element_horizontally_in_parent(right, { type = "label", name = Frame_Panels_Names.machine_performance.machine_to_yield.yield_result, caption = "settings incorrect for computation"})
+    dynamic_fields.machine_to_yield.result = machine_to_yield_res_panel
 
     Add_space_in(main_container, false, true)
 
     -- d
     local machine_to_yield_container = Add_flow_panel( main_container )
-    Center_element_horizontally_in_parent(machine_to_yield_container,  {type = "label", caption = "product/sec with X machines", style = "heading_1_label" })
-
+    Center_element_horizontally_in_parent( machine_to_yield_container,  {type = "label", caption = "product/sec with X machines", style = "heading_1_label" })
     local field_container = Add_flow_panel( machine_to_yield_container, "horizontal" )
-    Add_space_in(field_container, true, false)
+
     local left = Add_flow_panel( field_container )
     local title = Center_element_horizontally_in_parent(left, { type = "label", caption = "Target Yield", style ="heading_2_label" })
-    Center_element_horizontally_in_parent(left, { 
+    dynamic_fields.yield_to_machine.input_field = Center_element_horizontally_in_parent(left, { 
         type = "textfield",
-        name = Frame_Panels_Names.machine_performance.machine_to_yield.input_field,
+        name = Frame_Panels_Names.machine_performance.yield_to_machine.input_field,
         clear_and_focus_on_right_click = true,
         numeric = true
-    })
-    
-    -- Add_space_in(field_container, true, false)
-    
+    })    
+    Add_space_in(field_container, true, false)
     
     local produce = Add_flow_panel(field_container)
     Add_space_in(produce, true, true)
     produce.add { type = "label", caption = "------------------>", style = "heading_2_label" }
     Add_space_in(produce, true, true)
-
-    -- Add_space_in(field_container, true, false)
+    
+    Add_space_in(field_container, true, false)
     local right = Add_flow_panel( field_container )
     Center_element_horizontally_in_parent(right, { type = "label", caption = "Necessary machines", style ="heading_2_label" })
-    Center_element_horizontally_in_parent(right, { type = "label", name = Frame_Panels_Names.machine_performance.yield_to_machine.yield_result, caption = "machine count"})
-    Add_space_in(field_container, true, false)
+    local yield_to_machine_res_panel = Center_element_horizontally_in_parent(right, { type = "label", name = Frame_Panels_Names.machine_performance.yield_to_machine.yield_result, caption = "settings incorrect for computation"})
+    dynamic_fields.yield_to_machine.result = yield_to_machine_res_panel
 
 end
 
 
 function Update_Performances()
+    global.selection = selection
+    if selection.building == nil or selection.recipe == nil then return end
+
+    local recipe_prototype = game.recipe_prototypes[selection.recipe.name]
+    local machine_prototype = game.entity_prototypes[selection.building.name]
+
+    local init_machine_speed = machine_prototype.crafting_speed
+    local effective_machine_speed = init_machine_speed
+
+    for i=1, #Module_slots, 1 do
+        local elem_value = Module_slots[i].elem_value
+        if elem_value ~= nil then 
+            local bonus_ratio = game.item_prototypes[elem_value].module_effects.speed.bonus
+            effective_machine_speed = effective_machine_speed + ( init_machine_speed * bonus_ratio)
+        end
+    end
+
     
+    local crafting_time = recipe_prototype.energy / effective_machine_speed
+    local yield_per_second = (1/crafting_time)/recipe_prototype.products[1].amount
+    crafting_time = Truncate_float_to_decimal_count(crafting_time, 2)
+    dynamic_fields.mono.effective_craft_time.caption = tostring(crafting_time)
+    dynamic_fields.mono.yield_per_second.caption = Truncate_float_to_decimal_count(yield_per_second, 2)
+
+    Update_yield_to_machine( dynamic_fields.yield_to_machine.input_field.text )
+    Update_machine_to_yield( dynamic_fields.machine_to_yield.input_field.text )
+end
+
+function Update_yield_to_machine( target_yield )
+    if selection.building == nil or selection.recipe == nil or target_yield == "" then
+        dynamic_fields.yield_to_machine.result.caption = "settings incorrect for computation"
+        return
+    end
+    local mono_yield = tonumber(dynamic_fields.mono.yield_per_second.caption)
+    dynamic_fields.yield_to_machine.result.caption = math.ceil(tonumber(target_yield) / mono_yield)
+end
+
+function Update_machine_to_yield( machine_count )
+    if selection.building == nil or selection.recipe == nil or machine_count == "" then
+        dynamic_fields.machine_to_yield.result.caption = "Settings incorrect for computation"
+        return
+    end
+    local mono_yield = tonumber(dynamic_fields.mono.yield_per_second.caption)
+    dynamic_fields.machine_to_yield.result.caption = tonumber(machine_count) * mono_yield
+
 end
 
 function Update_Recipe_Selection(selected_recipe)
@@ -230,6 +285,11 @@ function Update_Recipe_Selection(selected_recipe)
         selection.recipe = nil
         return
     end
+
+
+    --[[  SELECTIVE MODULES ACCORDING TO RECIPE 
+    Currently unsupported as effectivity modules irrelevant for yield calculation purposes
+    and producitivity modules would require a whole sub section for related effects.
 
     selection.available_modules = Modules_Profiles.Basics
     if selected_recipe.subgroup.name == "intermediate-product" then
@@ -241,6 +301,9 @@ function Update_Recipe_Selection(selected_recipe)
             selection.available_modules = Modules_Profiles.intermediate_products
         end
     end
+    ]]--
+
+    selection.available_modules = Modules_Profiles.Speeds
 
     selection.recipe = selected_recipe
 

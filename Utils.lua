@@ -121,6 +121,7 @@ function Test_Panel(parent, direction)
     return new_panel
 end
 
-function Add_Label_With_Title( frame )
-    
+function Truncate_float_to_decimal_count( float, target_decimal_count )
+    local pow = 10 ^ target_decimal_count
+    return math.floor(float * pow) / pow
 end
