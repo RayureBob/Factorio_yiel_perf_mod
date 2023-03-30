@@ -8,7 +8,10 @@ So I started to make a mod about it.
 
 The basic features are working.
 Here's the todo list to completion:
+
 • Add support for efficiency modules
+
 • Add Support for productivity modules
+
 • Extend UI to support recipe with more than 1 product (i.e. allow computation on chemical recipe like oil refining)
 
